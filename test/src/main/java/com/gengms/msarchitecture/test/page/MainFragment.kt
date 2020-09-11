@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.gengms.architecture.navigation.nav
 import com.gengms.msarchitecture.R
-import kotlinx.android.synthetic.main.fragment_recycler.*
+import kotlinx.android.synthetic.main.fragment_main.*
 
-class RecyclerFragment: Fragment() {
+class MainFragment: Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_recycler, container, false)
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btnItemDecoration.setOnClickListener { nav().navigate(R.id.action_recyclerFragment_to_itemDecorationFragment) }
+        btnRecycler.setOnClickListener { nav().navigate(R.id.action_mainFragment_to_recyclerFragment) }
     }
 }

@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
-    app:startDestination="@id/recyclerFragment">
+    app:startDestination="@id/mainFragment">
 
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.gengms.msarchitecture.test.page.MainFragment"
+        android:label="MainFragment">
+
+        <action
+            android:id="@+id/action_mainFragment_to_recyclerFragment"
+            app:destination="@id/recyclerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/recyclerFragment"
         android:name="com.gengms.msarchitecture.test.page.RecyclerFragment"
         android:label="RecyclerFragment" >
-        <!--<action
-            android:id="@+id/action_homeFragment_to_selectCountryDialogFragment"
-            app:destination="@id/selectCountryDialogFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_selectLanguageDialogFragment"
-            app:destination="@id/selectLanguageDialogFragment" />-->
+            android:id="@+id/action_recyclerFragment_to_itemDecorationFragment"
+            app:destination="@id/itemDecorationFragment" />
     </fragment>
-    <!--<fragment
-        android:id="@+id/selectCountryDialogFragment"
-        android:name="com.gengms.moreapps.func.countrycode.SelectCountryDialogFragment"
-        android:label="SelectCountryDialogFragment" />
     <fragment
-        android:id="@+id/selectLanguageDialogFragment"
-        android:name="com.gengms.moreapps.func.languagecode.SelectLanguageDialogFragment"
-        android:label="SelectLanguageDialogFragment" />-->
+        android:id="@+id/itemDecorationFragment"
+        android:name="com.gengms.msarchitecture.test.page.ItemDecorationFragment"
+        android:label="ItemDecorationFragment" />
 </navigation>

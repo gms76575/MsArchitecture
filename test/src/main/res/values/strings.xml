@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MsArchitecture</string>
+    <string name="test_item_decoration">Test_Item_Decoration</string>
+    <string name="go_to_recycler">RecyclerView</string>
 </resources>
