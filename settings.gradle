@@ -1,0 +1,9 @@
+include ':base'
+include ':recyclerview'
+include ':logger'
+include ':loadinghelper'
+include ':permission'
+include ':components'
+include ':architecture'
+include ':test'
+rootProject.name = "MsArchitecture"
