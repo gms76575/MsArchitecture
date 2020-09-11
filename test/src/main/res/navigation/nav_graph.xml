@@ -19,9 +19,16 @@
         <action
             android:id="@+id/action_recyclerFragment_to_itemDecorationFragment"
             app:destination="@id/itemDecorationFragment" />
+        <action
+            android:id="@+id/action_recyclerFragment_to_recyclerAdapterFragment"
+            app:destination="@id/recyclerAdapterFragment" />
     </fragment>
     <fragment
         android:id="@+id/itemDecorationFragment"
         android:name="com.gengms.msarchitecture.test.page.ItemDecorationFragment"
         android:label="ItemDecorationFragment" />
+    <fragment
+        android:id="@+id/recyclerAdapterFragment"
+        android:name="com.gengms.msarchitecture.test.page.RecyclerAdapterFragment"
+        android:label="RecyclerAdapterFragment" />
 </navigation>

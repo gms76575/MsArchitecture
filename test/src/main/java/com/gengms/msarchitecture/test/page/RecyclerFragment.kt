@@ -21,5 +21,6 @@ class RecyclerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         btnItemDecoration.setOnClickListener { nav().navigate(R.id.action_recyclerFragment_to_itemDecorationFragment) }
+        btnRecyclerAdapter.setOnClickListener { nav().navigate(R.id.action_recyclerFragment_to_recyclerAdapterFragment) }
     }
 }

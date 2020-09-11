@@ -12,4 +12,12 @@
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/test_item_decoration" />
 
+    <Button
+        android:id="@+id/btnRecyclerAdapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/test_recycler_adapter" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,8 +28,5 @@ abstract class BaseDataBindingAdapter<D,B : ViewDataBinding>(private val dataLis
     @LayoutRes
     protected abstract fun getLayoutResId(viewType: Int): Int
 
-    protected abstract fun onBindItem(
-        binding: B?,
-        data: D
-    )
+    protected abstract fun onBindItem(binding: B?, data: D): Void
 }
