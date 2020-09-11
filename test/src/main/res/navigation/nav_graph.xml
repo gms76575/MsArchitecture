@@ -29,6 +29,6 @@
         android:label="ItemDecorationFragment" />
     <fragment
         android:id="@+id/recyclerAdapterFragment"
-        android:name="com.gengms.msarchitecture.test.page.RecyclerAdapterFragment"
+        android:name="com.gengms.msarchitecture.test.page.BindingAdapterFragment"
         android:label="RecyclerAdapterFragment" />
 </navigation>

@@ -10,7 +10,7 @@ import com.gengms.recyclerview.base.MsViewHolder
 
 open class MsBindingViewHolder(binding: ViewDataBinding): MsViewHolder(binding.root)
 
-abstract class BaseDataBindingAdapter<D,B : ViewDataBinding>(private val dataList : List<D>): MsRecyclerAdapter() {
+abstract class MsDataBindingAdapter<D,B : ViewDataBinding>(private val dataList : List<D>): MsRecyclerAdapter() {
     override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): MsBindingViewHolder {
         val binding : B = DataBindingUtil.inflate(LayoutInflater.from(parent.context),
             this.getLayoutResId(viewType),parent,false
@@ -25,8 +25,10 @@ abstract class BaseDataBindingAdapter<D,B : ViewDataBinding>(private val dataLis
         binding?.executePendingBindings()
     }
 
+    override fun getItemCount(): Int = dataList.size
+
     @LayoutRes
     protected abstract fun getLayoutResId(viewType: Int): Int
 
-    protected abstract fun onBindItem(binding: B?, data: D): Void
+    protected abstract fun onBindItem(binding: B?, data: D)
 }
