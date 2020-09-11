@@ -1,5 +1,4 @@
 include ':common'
-include ':binding'
 include ':base'
 include ':recyclerview'
 include ':logger'

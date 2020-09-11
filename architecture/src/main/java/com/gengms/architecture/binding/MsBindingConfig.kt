@@ -1,4 +1,4 @@
-package com.gengms.binding
+package com.gengms.architecture.binding
 
 import android.util.SparseArray
 

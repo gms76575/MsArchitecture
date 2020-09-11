@@ -16,6 +16,9 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
+    buildFeatures {
+        dataBinding true
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -32,5 +35,9 @@ dependencies {
 
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_runtime_ktx"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_livedata_ktx"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_viewmodel_ktx"
+    implementation project(":recyclerview")
 
 }
