@@ -2,5 +2,6 @@
     <string name="app_name">MsArchitecture</string>
     <string name="test_item_decoration">Test_Item_Decoration</string>
     <string name="test_recycler_adapter">Test_Recycler_Adapter</string>
+    <string name="test_single_adapter">Test_Single_Select_Adapter</string>
     <string name="go_to_recycler">RecyclerView</string>
 </resources>

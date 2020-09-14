@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_recyclerFragment_to_recyclerAdapterFragment"
             app:destination="@id/recyclerAdapterFragment" />
+        <action
+            android:id="@+id/action_recyclerFragment_to_singleAdapterFragment"
+            app:destination="@id/singleAdapterFragment" />
     </fragment>
     <fragment
         android:id="@+id/itemDecorationFragment"
@@ -31,4 +34,8 @@
         android:id="@+id/recyclerAdapterFragment"
         android:name="com.gengms.msarchitecture.test.page.BindingAdapterFragment"
         android:label="RecyclerAdapterFragment" />
+    <fragment
+        android:id="@+id/singleAdapterFragment"
+        android:name="com.gengms.msarchitecture.test.page.SingleAdapterFragment"
+        android:label="SingleAdapterFragment" />
 </navigation>

@@ -1,8 +1,6 @@
 package com.gengms.recyclerview.selectable
 
-import android.os.Handler
 import android.view.View
-import android.view.ViewGroup
 import com.gengms.recyclerview.base.MsRecyclerAdapter
 import com.gengms.recyclerview.base.MsViewHolder
 
@@ -10,153 +8,97 @@ import com.gengms.recyclerview.base.MsViewHolder
  * 单选/多选适配器
  */
 abstract class SelectableAdapter<T>(
-    protected val dataList: List<Selectable<T>>,
-    private var selectMode: SelectMode
+    @SelectMode private var selectMode: Int
 ) : MsRecyclerAdapter() {
-
-    private var selectState: SelectState = SelectState.DOING
-    protected var singleSelectItem: Selectable<T>? = null
-    private var mOnSelectStateChangeListener :  ((selectState: SelectState) -> Unit)? = null
+    private var mOnSelectStateChangeListener :  ((selectState: Int) -> Unit)? = null
     private var mOnSelectChangeListener :  ((position : Int) -> Unit)? = null
 
-    init {
-        if (selectMode == SelectMode.LONG_CLICK_MULTI) {
-            selectState = SelectState.DONE
+    protected val selectList: ArrayList<Selectable<T>> = ArrayList()
+    private val supportStates = ArrayList<Int>()
+    private var currentState: Int? = null
+    protected var singleSelectPosition: Int = 0
+    fun addSupportStates(@SelectState selectState: Int): SelectableAdapter<T>{
+        supportStates.add(selectState)
+        return this
+    }
+    fun setCurrentState(@SelectState selectState: Int): SelectableAdapter<T>{
+        currentState = selectState
+        return this
+    }
+    fun setDataList(dataList: List<T>) {
+        selectList.clear()
+        addDataList(dataList)
+    }
+    fun refresh(dataList: List<T>) {
+        setDataList(dataList)
+        notifyDataSetChanged()
+    }
+    fun addDataList(dataList: List<T>) {
+        for (item in dataList) {
+            selectList.add(Selectable(item))
         }
     }
-
-    fun selectItem(position: Int, select : Boolean) {
-        dataList[position].selected = select
+    fun loadMore(dataList: List<T>) {
+        addDataList(dataList)
+        notifyDataSetChanged()
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MsViewHolder {
-        return onCreateSelectableViewHolder(parent, viewType)
-    }
-
-    abstract fun onCreateSelectableViewHolder(parent: ViewGroup, viewType: Int): SelectableViewHolder
 
     override fun onBindViewHolder(holder: MsViewHolder, position: Int) {
-        val selectableHolder: SelectableViewHolder = holder as SelectableViewHolder
-        when (selectMode) {
-            SelectMode.SINGLE -> {
-                onBindSingleMode(selectableHolder, position)
-            }
-            SelectMode.FIXED_MULTI -> {
-
-            }
-            else -> {
-                onBindMultiMode(selectableHolder, position)
-            }
+        if (holder !is SelectableViewHolder) {
+            throw ClassCastException("Please return a SelectableViewHolder in method\"onCreateViewHolder\"")
         }
-    }
-
-    private fun onBindSingleMode(selectableHolder: SelectableViewHolder, pos: Int) {
-        selectableHolder.checkBox.visibility = View.VISIBLE
-        selectableHolder.checkBox.isChecked = dataList[pos].selected
-        selectableHolder.setOnClick { _, position ->
-            val isChecked = !selectableHolder.checkBox.isChecked
-            dataList[position].selected = isChecked
-            selectableHolder.checkBox.isChecked = isChecked
-        }
-        selectableHolder.setOnLongClick { _, _ ->
-            false
-        }
-    }
-
-    private fun onBindMultiMode(selectableHolder: SelectableViewHolder, pos: Int) {
-        if (selectState == SelectState.DONE) {
-            selectableHolder.checkBox.visibility = View.GONE
-            holder.setOnLongClick(this::onItemLongClicked)
+        if (currentState == SelectState_SELECTING) {
+            holder.checkBox.visibility = View.VISIBLE
+            holder.checkBox.isChecked = selectList[position].selected
+            holder.setOnClick { _, pos ->
+                if (selectMode == SelectMode_SINGLE && singleSelectPosition == pos) {
+                    return@setOnClick
+                }
+                val selectItem = selectList[pos]
+                selectItem.selected = !selectItem.selected
+                notifyItemChanged(pos)
+                if (selectMode == SelectMode_SINGLE) {
+                    // 单选时取消上一次的选中
+                    selectList[singleSelectPosition].selected = false
+                    notifyItemChanged(singleSelectPosition)
+                    singleSelectPosition = pos
+                }
+                if (mOnSelectChangeListener != null) {
+                    mOnSelectChangeListener!!(pos)
+                }
+            }
+            holder.setOnLongClick { _, _ -> false }
+        } else {
+            holder.checkBox.visibility = View.GONE
             if (mOnItemClickListener != null) {
                 holder.setOnClick(mOnItemClickListener!!)
             }
-        } else {
-            selectableHolder.checkBox.visibility = View.VISIBLE
-            selectableHolder.checkBox.isChecked = dataList[position].selected
-            if (mOnItemLongClickListener != null) {
-                holder.setOnItemLongClickListener(mOnItemLongClickListener!!)
+            if (currentState == SelectState_LONG_CLICK_TO_SELECT) {
+                holder.setOnLongClick { _, _ ->
+                    if (supportStates.contains(SelectState_SELECTING)) {
+                        currentState = SelectState_SELECTING
+                        notifyDataSetChanged()
+                        if (mOnSelectStateChangeListener != null) {
+                            mOnSelectStateChangeListener!!(SelectState_SELECTING)
+                        }
+                    }
+                    true
+                }
+            } else {
+                if (mOnItemLongClickListener != null) {
+                    holder.setOnLongClick(mOnItemLongClickListener!!)
+                }
             }
-            holder.setOnItemClickListener(this::onItemClicked)
         }
     }
 
-    /**
-     * 长按开始选择（多选)
-     */
-    private fun onItemLongClicked(viewHolder: MsViewHolder, position: Int): Boolean {
-        selectState = SelectState.DOING
-        notifyDataSetChanged()
-        if (mOnSelectStateChangeListener != null) {
-            mOnSelectStateChangeListener!!.invoke(SelectState.DOING)
-        }
-        return true
-    }
-
-    private fun onItemClicked(viewHolder: MsViewHolder, position: Int) {
-        if (selectMode == SelectMode.SINGLE) {
-            singleSelect(viewHolder, position)
-        } else {
-            multiSelect(viewHolder, position)
-        }
-    }
-
-    /**
-     * 多选改变item选择状态
-     */
-    private fun multiSelect(viewHolder: MsViewHolder, position: Int) {
-        val isSelected = dataList[position].selected
-        dataList[position].selected = !isSelected
-        Handler().post { notifyItemChanged(position) }
-        if (mOnSelectChangeListener != null) {
-            mOnSelectChangeListener!!.invoke(position)
-        }
-    }
-
-    /**
-     * 单选选中item
-     */
-    private fun singleSelect(viewHolder: MsViewHolder, position: Int) {
-        if (singleSelectItem != null) {
-            singleSelectItem!!.selected = false
-        }
-        dataList[position].selected = true
-        singleSelectItem = dataList[position]
-        notifyDataSetChanged()
-        if (mOnSelectChangeListener != null) {
-            mOnSelectChangeListener!!.invoke(position)
-        }
-    }
-
-    /**
-     * 点击返回键，在container返回键监听处调用
-     */
-    fun onBackClicked(): Boolean {
-        if (selectMode == SelectMode.LONG_CLICK_MULTI && selectState == SelectState.DOING) {
-            selectState = SelectState.DONE
-            notifyDataSetChanged()
-            if (mOnSelectStateChangeListener != null) {
-                mOnSelectStateChangeListener!!.invoke(SelectState.DONE)
-            }
-            return true
-        }
-        return false
-    }
-
-    /**
-     * 完成选择时改变选择状态
-     */
-    fun onSelectComplete() {
-        if (selectMode == SelectMode.LONG_CLICK_MULTI && selectState == SelectState.DOING) {
-            selectState = SelectState.DONE
-            notifyDataSetChanged()
-        }
-    }
+    override fun getItemCount() = selectList.size
 
     /**
      * 是否有选中
      */
     fun hasSelectAnything(): Boolean {
-        for (item in dataList) {
+        for (item in selectList) {
             if (item.selected) {
                 return true
             }
@@ -168,7 +110,7 @@ abstract class SelectableAdapter<T>(
      * 是否全选
      */
     fun isSelectAll(): Boolean {
-        for (item in dataList) {
+        for (item in selectList) {
             if (!item.selected) {
                 return false
             }
@@ -180,10 +122,10 @@ abstract class SelectableAdapter<T>(
      * 全选/取消全选
      */
     fun selectAll(selectAll: Boolean) {
-        if (selectMode == SelectMode.SINGLE || selectState == SelectState.DONE) {
+        if (selectMode == SelectMode_SINGLE || currentState != SelectState_SELECTING) {
             return
         }
-        for (item in dataList) {
+        for (item in selectList) {
             item.selected = selectAll
         }
         notifyDataSetChanged()
@@ -194,7 +136,7 @@ abstract class SelectableAdapter<T>(
      */
     fun getSelectedData(): List<T> {
         val selected = ArrayList<T>()
-        for (item in dataList) {
+        for (item in selectList) {
             if (item.selected) {
                 selected.add(item.data)
             }
@@ -202,18 +144,11 @@ abstract class SelectableAdapter<T>(
         return selected
     }
 
-    fun onComplete() {
-        if (selectMode == SelectMode.LONG_CLICK_MULTI && selectState == SelectState.DOING) {
-            selectState = SelectState.DONE
-            notifyDataSetChanged()
-        }
-    }
-
     fun setOnSelectChangeListener(listener: (position : Int) -> Unit) {
         mOnSelectChangeListener = listener
     }
 
-    fun setOnSelectStateChangeListener(listener: (selectState: SelectState) -> Unit) {
+    fun setOnSelectStateChangeListener(listener: (selectState: Int) -> Unit) {
         mOnSelectStateChangeListener = listener
     }
 }
