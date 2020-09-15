@@ -23,5 +23,6 @@ class RecyclerFragment: Fragment() {
         btnItemDecoration.setOnClickListener { nav().navigate(R.id.action_recyclerFragment_to_itemDecorationFragment) }
         btnRecyclerAdapter.setOnClickListener { nav().navigate(R.id.action_recyclerFragment_to_recyclerAdapterFragment) }
         btnSingleAdapter.setOnClickListener { nav().navigate(R.id.action_recyclerFragment_to_singleAdapterFragment) }
+        btnMultiAdapter.setOnClickListener { nav().navigate(R.id.action_recyclerFragment_to_multiAdapterFragment) }
     }
 }
