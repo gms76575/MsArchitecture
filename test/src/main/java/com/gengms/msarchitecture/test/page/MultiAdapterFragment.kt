@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gengms.common.utils.toastShort
@@ -12,7 +11,10 @@ import com.gengms.msarchitecture.R
 import com.gengms.msarchitecture.test.adapter.MyMultiAdapter
 import com.gengms.msarchitecture.test.bean.TestBean
 import com.gengms.recyclerview.decoration.MsDividerItemDecoration
+import com.gengms.recyclerview.selectable.SelectState_SELECTING
 import kotlinx.android.synthetic.main.fragment_item_decoration.*
+import kotlinx.android.synthetic.main.fragment_item_decoration.recycler
+import kotlinx.android.synthetic.main.fragment_select.*
 
 class MultiAdapterFragment: Fragment() {
     override fun onCreateView(
@@ -33,7 +35,15 @@ class MultiAdapterFragment: Fragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
         val adapter = MyMultiAdapter(getSingleDataList())
         recycler.adapter = adapter
-        adapter.setOnItemClickListener { viewHolder, position ->
+        adapter.setOnItemClickListener { _, position ->
+            toastShort("clicked$position")
+        }
+        adapter.setOnSelectStateChangeListener {
+            if (it == SelectState_SELECTING) {
+                layout_confirm.visibility = View.VISIBLE
+            } else {
+                layout_confirm.visibility = View.GONE
+            }
         }
     }
 
